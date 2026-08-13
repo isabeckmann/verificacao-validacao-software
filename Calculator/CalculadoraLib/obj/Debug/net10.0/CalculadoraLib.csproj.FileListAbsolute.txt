@@ -1,0 +1,16 @@
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\xunit.abstractions.dll
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\xunit.runner.visualstudio.testadapter.dll
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\CalculadoraLib.deps.json
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\CalculadoraLib.runtimeconfig.json
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\CalculadoraLib.dll
+C:\Users\beckm\CalculadoraLib\bin\Debug\net10.0\CalculadoraLib.pdb
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.csproj.AssemblyReference.cache
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.AssemblyInfoInputs.cache
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.AssemblyInfo.cs
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.csproj.CoreCompileInputs.cache
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.dll
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\refint\CalculadoraLib.dll
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.pdb
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\CalculadoraLib.genruntimeconfig.cache
+C:\Users\beckm\CalculadoraLib\obj\Debug\net10.0\ref\CalculadoraLib.dll
