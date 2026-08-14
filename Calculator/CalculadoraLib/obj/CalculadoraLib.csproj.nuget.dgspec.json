@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\beckm\\CalculadoraLib\\CalculadoraLib.csproj": {}
+    "C:\\vv-software\\Calculator\\CalculadoraLib\\CalculadoraLib.csproj": {}
   },
   "projects": {
-    "C:\\Users\\beckm\\CalculadoraLib\\CalculadoraLib.csproj": {
+    "C:\\vv-software\\Calculator\\CalculadoraLib\\CalculadoraLib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\beckm\\CalculadoraLib\\CalculadoraLib.csproj",
+        "projectUniqueName": "C:\\vv-software\\Calculator\\CalculadoraLib\\CalculadoraLib.csproj",
         "projectName": "CalculadoraLib",
-        "projectPath": "C:\\Users\\beckm\\CalculadoraLib\\CalculadoraLib.csproj",
+        "projectPath": "C:\\vv-software\\Calculator\\CalculadoraLib\\CalculadoraLib.csproj",
         "packagesPath": "C:\\Users\\beckm\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\beckm\\CalculadoraLib\\obj\\",
+        "outputPath": "C:\\vv-software\\Calculator\\CalculadoraLib\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
