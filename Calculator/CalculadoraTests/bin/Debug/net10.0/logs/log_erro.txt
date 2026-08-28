@@ -1,2 +1,0 @@
-Soma: 2 + 2 = 4
-Erro: Falha ao salvar no repositório (simulado para teste)
