@@ -14,10 +14,23 @@ namespace CalculadoraLib
 
         public int Somar(int a, int b)
         {
-            int resultado = a + b;
-            _logger?.Registrar($"Soma: {a} + {b} = {resultado}");
-            _repositorio?.Salvar($"Soma: {resultado}");
-            return resultado;
+            try
+            {
+                int resultado = a + b;
+
+                // Mascara valores considerados sensíveis para não expor dados no log
+                string valorA = a > 1000 ? "******" : a.ToString();
+                string valorB = b > 1000 ? "******" : b.ToString();
+
+                _logger?.Registrar($"Soma: {valorA} + {valorB} = {resultado}");
+                _repositorio?.Salvar($"Soma: {resultado}");
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                _logger?.Registrar($"Erro: {ex.Message}");
+                throw;
+            }
         }
 
         public int Subtrair(int a, int b)
