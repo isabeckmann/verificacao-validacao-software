@@ -1,0 +1,94 @@
+# =========================
+# Build results (.NET / C#)
+# =========================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 2015/2017/2019/2022 cache/options
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+
+# Build artefatos específicos
+*.dll
+*.pdb
+*.exe
+*.cache
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
+*.GeneratedMSBuildEditorConfig.editorconfig
+*.GlobalUsings.g.cs
+*.assets.cache
+*.csproj.AssemblyReference.cache
+*.csproj.CoreCompileInputs.cache
+*.csproj.FileListAbsolute.txt
+*.csproj.nuget.dgspec.json
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+*.genruntimeconfig.cache
+*.runtimeconfig.json
+*.deps.json
+*.sourcelink.json
+project.assets.json
+project.nuget.cache
+
+# Resultados de teste
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+.msCoverageSourceRootsMapping_*
+CoverletSourceRootsMapping_*
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# Publish
+publish/
+*.pubxml
+*.pubxml.user
+
+# Logs gerados pelos testes de sistema (Trilha 03)
+logs/
+*.log
+
+# =========================
+# Relatórios de teste de desempenho
+# =========================
+# BenchmarkDotNet (Demonstração 1 - nível de código)
+BenchmarkDotNet.Artifacts/
+
+# NBomber (Demonstração 2 - nível de API/sistema)
+relatorios_desempenho/
+*_report_*/
+NBomber.Logger.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

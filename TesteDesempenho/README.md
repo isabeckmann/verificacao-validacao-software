@@ -1,75 +1,97 @@
 # Demonstração Prática: Teste de Desempenho (Performance Testing)
 
-## 1. O que é o "nível de teste" de desempenho?
+Este pacote contém três projetos C# independentes:
 
-Teste de desempenho é um **teste não-funcional**: não valida *o que* o sistema faz, mas *quão bem* ele faz. Ele aparece em diferentes granularidades da pirâmide de testes:
+```
+TesteDesempenho/
+├── BenchmarkDemo/       -> Teste de desempenho no nível de CÓDIGO (BenchmarkDotNet)
+├── MockCheckoutApi/     -> API local "de mentira", com um gargalo proposital
+└── LoadTestDemo/        -> Teste de CARGA/STRESS contra a MockCheckoutApi (NBomber)
+```
 
-| Nível | O que mede | Ferramenta usada aqui |
-|---|---|---|
-| **Micro (unidade/código)** | Tempo de execução e alocação de memória de um método/algoritmo isolado | `BenchmarkDotNet` |
-| **Macro (API/sistema)** | Comportamento sob carga simultânea de usuários (throughput, latência, erros) | `NBomber` |
-| **Ponta a ponta (produção)** | Escalabilidade real, infraestrutura, banco de dados | JMeter, k6, Gatling (mencionados, não implementados aqui) |
+Pré-requisito: .NET 8 SDK instalado (`dotnet --version` deve mostrar 8.x).
 
-### Subtipos de teste de desempenho (nível macro)
-- **Load Testing**: carga esperada/normal (ex: 100 usuários simultâneos).
-- **Stress Testing**: além do limite, para achar o ponto de ruptura.
-- **Spike Testing**: pico repentino de requisições.
-- **Soak/Endurance Testing**: carga moderada por longo período (detecta vazamento de memória).
+---
 
-## 2. Demonstração 1 — Nível de código (Micro-benchmark)
+## 1. BenchmarkDemo — nível de código
 
-Arquivo: `BenchmarkDemo/Program.cs`
+Compara `List.Contains`, um loop manual em `Array` e `HashSet.Contains`, buscando um
+elemento inexistente em coleções de 100, 10.000 e 1.000.000 de itens.
 
-Compara 3 formas de buscar um elemento em uma coleção (`List<T>.Contains`, `Array` com loop manual, `HashSet<T>.Contains`), medindo tempo de execução e memória alocada com **BenchmarkDotNet**, a ferramenta padrão de mercado para isso em .NET.
-
-Como rodar:
+**Como rodar:**
 ```bash
 cd BenchmarkDemo
 dotnet run -c Release
 ```
-> Sempre em modo `Release` — benchmark em `Debug` gera números irreais.
 
-O relatório gerado mostra colunas como `Mean`, `Error`, `StdDev` e `Allocated`, permitindo comparar visualmente qual estrutura de dados escala melhor conforme o volume de dados cresce (o exemplo testa com 100, 10.000 e 1.000.000 de itens).
+**Onde fica o resultado:** `BenchmarkDemo/BenchmarkDotNet.Artifacts/results/` (HTML, Markdown e CSV).
 
-## 3. Demonstração 2 — Nível de API (Load Test)
+---
 
-Arquivo: `LoadTestDemo/Program.cs`
+## 2. MockCheckoutApi + LoadTestDemo — nível de API/sistema (stress test)
 
-Simula 50 usuários virtuais fazendo requisições simultâneas contra um endpoint HTTP durante 30 segundos, usando **NBomber**, um framework de load testing nativo em .NET (equivalente ao k6/JMeter, mas escrito em C#).
+Esses dois projetos trabalham em conjunto: o `MockCheckoutApi` é o "sistema sob teste"
+(simula um endpoint de checkout com capacidade limitada de propósito), e o `LoadTestDemo`
+é quem gera a carga contra ele.
 
-Como rodar:
+### Por que uma API local em vez de uma API pública?
+
+Uma API pública robusta (como usamos numa primeira versão) absorve qualquer carga
+didática sem esforço — o que é ótimo para provar que "não há erro", mas ruim para
+ilustrar o que acontece quando um sistema *é* sobrecarregado. A `MockCheckoutApi` tem
+uma capacidade conhecida e controlada (~100-150 requisições/segundo), então o teste de
+carga consegue ultrapassá-la de propósito e gerar uma curva real de degradação.
+
+A API simula:
+- **Capacidade limitada** (15 "vagas" de processamento simultâneas, como um pool de conexões de banco).
+- **Fila com timeout**: se não sobrar vaga em 2 segundos, responde `503` (sistema sobrecarregado).
+- **Falha aleatória de dependência externa**: 2% de chance de `500`, independente da carga (simula algo como um gateway de pagamento instável).
+
+### Como rodar (precisa de DOIS terminais abertos ao mesmo tempo)
+
+**Terminal 1 — suba a API:**
+```bash
+cd MockCheckoutApi
+dotnet run -c Release
+```
+Deixe rodando. Ela escuta em `http://localhost:5000`.
+
+**Terminal 2 — rode o teste de carga:**
 ```bash
 cd LoadTestDemo
 dotnet run -c Release
 ```
 
-Ao final, o NBomber gera um relatório (HTML/CSV/Markdown) com métricas essenciais:
-- **RPS** (Requests Per Second / throughput)
-- **Latência** (mín, média, p50, p95, p99)
-- **Taxa de erro**
-- **Requisições completadas vs falhas**
+O teste sobe a carga em 5 estágios (20 → 80 → 150 → 400 → 800 req/s), cada um durando
+de 10 a 15 segundos. Os três primeiros estágios devem ficar estáveis; a partir do
+quarto (400 req/s, bem acima da capacidade da API), devem aparecer erros `503` de
+saturação, além dos `500` aleatórios.
 
-## 4. Estudo de caso para apresentação
+**Onde fica o resultado:** `LoadTestDemo/relatorios_desempenho_stress/` (HTML e CSV,
+com nome contendo a data/hora da execução).
 
-**Cenário:** API de checkout de um e-commerce (`POST /api/checkout`).
+### O que observar no relatório
+- **Latência (P50/P95/P99) subindo** conforme os estágios avançam — evidência de fila/contenção.
+- **Taxa de erro baixa (~2%) nos primeiros estágios**, subindo consideravelmente nos últimos — evidência do ponto de saturação.
+- **RPS efetivo menor que o RPS "oferecido"** nos estágios mais agressivos — sinal de que o sistema não consegue processar tudo que está sendo empurrado para ele.
 
-**Objetivo do teste:** validar se o endpoint suporta a carga esperada na Black Friday sem degradar a experiência do usuário.
+---
 
-**Critérios de aceite definidos previamente (SLA):**
-- p95 de latência < 500 ms
-- Taxa de erro < 1%
-- Suportar 200 requisições/segundo sustentadas por 5 minutos (load test)
-- Identificar o ponto de saturação ao dobrar a carga a cada 2 minutos (stress test)
+## Conceitos cobertos por essa demonstração
 
-**Passos da demonstração em aula:**
-1. Rodar o benchmark de código (Demo 1) para mostrar que otimizações de algoritmo/estrutura de dados já reduzem custo antes mesmo de chegar à carga de rede.
-2. Rodar o load test (Demo 2) contra uma API de exemplo (pode ser uma rota fake local, tipo `https://jsonplaceholder.typicode.com/posts` para fins didáticos).
-3. Analisar o relatório do NBomber e comparar com os critérios de aceite do SLA.
-4. Discutir: o que fazer se o SLA falhar? (cache, escalonamento horizontal, otimização de query, filas assíncronas).
+| Conceito | Onde aparece |
+|---|---|
+| Complexidade O(1) vs O(n) | BenchmarkDemo |
+| Alocação de memória (Garbage Collector) | BenchmarkDemo |
+| Load Testing (carga esperada) | Estágios 1-2 do LoadTestDemo |
+| Stress Testing (além do limite) | Estágios 3-4 do LoadTestDemo |
+| Spike Testing (pico repentino) | Estágio 5 do LoadTestDemo (salto de 400 para 800 req/s) |
+| Latência (P50/P95/P99) | Relatório do NBomber |
+| Taxa de erro e tipos de erro (saturação vs. falha externa) | Relatório do NBomber + lógica da MockCheckoutApi |
+| Throughput (RPS) | Relatório do NBomber |
 
-## 5. Outras ferramentas do mercado (para citar na apresentação)
-- **JMeter** (Java, GUI, muito usado em empresas tradicionais)
-- **k6** (JavaScript, moderno, ótimo para CI/CD)
-- **Gatling** (Scala, relatórios ricos)
-- **Locust** (Python, testes distribuídos)
-- **Azure Load Testing / AWS Distributed Load Testing** (nuvem, larga escala)
+## Solução de problemas comuns
+
+- **"contém mais de um arquivo de projeto"**: você está rodando `dotnet run` na pasta raiz `TesteDesempenho`, não dentro de uma das três subpastas. Entre na subpasta correta primeiro.
+- **Erro de conflito de versão do NBomber.Contracts**: já corrigido neste pacote — o `LoadTestDemo.csproj` referencia apenas o pacote `NBomber` (sem `NBomber.Http`).
+- **`Connection refused` ao rodar o LoadTestDemo**: a `MockCheckoutApi` não está rodando ou não terminou de subir — confira o Terminal 1 antes de rodar o Terminal 2.
