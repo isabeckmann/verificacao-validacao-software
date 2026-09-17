@@ -78,6 +78,17 @@ publish/
 logs/
 *.log
 
+# =========================
+# Relatórios de teste de desempenho
+# =========================
+# BenchmarkDotNet (Demonstração 1 - nível de código)
+BenchmarkDotNet.Artifacts/
+
+# NBomber (Demonstração 2 - nível de API/sistema)
+relatorios_desempenho/
+*_report_*/
+NBomber.Logger.log
+
 # Sistema operacional
 .DS_Store
 Thumbs.db
