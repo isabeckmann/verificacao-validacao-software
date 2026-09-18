@@ -81,13 +81,11 @@ logs/
 # =========================
 # Relatórios de teste de desempenho
 # =========================
-# BenchmarkDotNet (Demonstração 1 - nível de código)
+# BenchmarkDotNet (nível de código)
 BenchmarkDotNet.Artifacts/
 
-# NBomber (Demonstração 2 - nível de API/sistema)
-relatorios_desempenho/
-*_report_*/
-NBomber.Logger.log
+# ResponseTimeDemo (tempo de resposta + recursos, CSV por execução)
+relatorios_tempo_resposta/
 
 # Sistema operacional
 .DS_Store
