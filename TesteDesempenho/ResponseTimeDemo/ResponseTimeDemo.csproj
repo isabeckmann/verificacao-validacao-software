@@ -7,7 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <!-- Nenhum pacote NuGet necessário: HttpClient e System.Text.Json já
-       vêm inclusos no .NET, sem risco de conflito de versões. -->
+  <ItemGroup>
+    <PackageReference Include="ScottPlot" Version="5.1.59" />
+  </ItemGroup>
 
 </Project>
